@@ -1,38 +1,709 @@
+/* ============================================================
+   Termo Bíblico — sistema visual "pergaminho + aurora"
+   Tema claro (pergaminho) e escuro (candlelit) + paletas.
+   Dirigido por data-theme / data-palette no <html>.
+   ============================================================ */
+
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-@theme {
-  --color-correct: #3aa394;
-  --color-present: #d3ad69;
+@theme inline {
+  /* Utilitários Tailwind ligados aos tokens (bg-correct, text-accent…) */
+  --color-correct: var(--correct);
+  --color-present: var(--present);
+  --color-absent: var(--absent);
+  --color-accent: var(--accent);
+  --color-gold: var(--gold);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunken: var(--paper-sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
 :root {
-  --background: #faf9f7;
-  --foreground: #1c1917;
-  --tile-absent: #a8a29e;
+  /* Tipografia (fontes injetadas por next/font em layout.tsx) */
+  --font-display: var(--font-cinzel), Georgia, serif; /* títulos / wordmark */
+  --font-body: var(--font-spectral), Georgia, serif; /* corpo */
+  --font-tile: var(--font-cinzel), Georgia, serif; /* peças do tabuleiro */
+
+  /* Raios / cantos */
+  --r-tile: 9px;
+  --r-key: 8px;
+  --r-card: 16px;
+  --r-pill: 999px;
+
+  /* Acento padrão — paleta "Pergaminho" (garnet) */
+  --accent: #7d2533;
+  --accent-ink: #fdf6ea;
+  --accent-soft: rgba(125, 37, 51, 0.1);
+  --gold: #b3892b;
+  --gold-soft: rgba(179, 137, 43, 0.16);
+  --correct: #4f7a3f;
+  --present: #b3892b;
+
+  /* Tokens do tema claro também em :root (fallback antes do script) */
+  --paper: #f3ead4;
+  --paper-raised: #faf3e1;
+  --paper-sunken: #ebdfc2;
+  --ink: #2c2620;
+  --ink-soft: #6c6150;
+  --ink-faint: #9c9077;
+  --line: #dccdaa;
+  --line-strong: #c2b287;
+  --tile-letter: #fdf8ec;
+  --tile-empty-border: #d8c9a4;
+  --tile-typed-border: #b09f78;
+  --absent: #b8aa89;
+  --absent-key: #c6b794;
+  --key-bg: #e7dbbe;
+  --key-bg-hover: #ddcfac;
+  --aurora-1: rgba(212, 170, 78, 0.34);
+  --aurora-2: rgba(180, 120, 70, 0.1);
+  --scrim: rgba(44, 36, 24, 0.45);
+  --shadow-card: 0 18px 48px -22px rgba(70, 52, 20, 0.55);
 }
 
-.dark {
-  --background: #181614;
-  --foreground: #f5f5f4;
-  --tile-absent: #44403c;
+/* ---------- Paletas (acento + tom de acerto) ---------- */
+[data-palette="pergaminho"] {
+  --accent: #7d2533;
+  --accent-soft: rgba(125, 37, 51, 0.1);
+  --correct: #4f7a3f;
+  --present: #b3892b;
+}
+[data-palette="original"] {
+  --accent: #2f8f81;
+  --accent-soft: rgba(47, 143, 129, 0.12);
+  --correct: #3aa394;
+  --present: #c79a3f;
+}
+[data-palette="real"] {
+  --accent: #34508f;
+  --accent-soft: rgba(52, 80, 143, 0.12);
+  --correct: #3d6b4e;
+  --present: #b3892b;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ---------- Tema escuro (candlelit) ---------- */
+[data-theme="dark"] {
+  --paper: #1b1712;
+  --paper-raised: #262019;
+  --paper-sunken: #14110c;
+  --ink: #f0e6d0;
+  --ink-soft: #b8aa8c;
+  --ink-faint: #877a60;
+  --line: #3a3124;
+  --line-strong: #564a34;
+  --tile-letter: #fdf8ec;
+  --tile-empty-border: #3a3124;
+  --tile-typed-border: #6a5c41;
+  --absent: #443a2a;
+  --absent-key: #2f281e;
+  --key-bg: #2e2820;
+  --key-bg-hover: #3a3227;
+  --aurora-1: rgba(206, 158, 64, 0.22);
+  --aurora-2: rgba(120, 78, 40, 0.12);
+  --scrim: rgba(8, 6, 4, 0.62);
+  --shadow-card: 0 22px 60px -20px rgba(0, 0, 0, 0.75);
 }
 
 html,
 body {
-  background: var(--background);
-  color: var(--foreground);
+  min-height: 100%;
 }
 
-/* ===== Animações do jogo ===== */
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Aurora — raio de luz dourada no alto + leve vinheta nas bordas */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(125% 70% at 50% -22%, var(--aurora-1) 0%, transparent 58%),
+    radial-gradient(90% 60% at 80% 8%, var(--aurora-2) 0%, transparent 55%);
+  pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(
+    130% 100% at 50% 30%,
+    transparent 62%,
+    rgba(40, 28, 8, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+/* ---------- Cabeçalho ---------- */
+.tb-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.tb-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+.tb-iconbtn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.tb-iconbtn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tb-wordmark {
+  font-family: var(--font-display);
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+  letter-spacing: 0.14em;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.34em;
+}
+.tb-wordmark .accent {
+  color: var(--accent);
+}
+.tb-wordmark .dot {
+  color: var(--gold);
+}
+
+/* ---------- Eyebrow "DESAFIO #1 · 5 LETRAS" ---------- */
+.tb-eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+.tb-eyebrow::before,
+.tb-eyebrow::after {
+  content: "";
+  height: 1px;
+  width: 26px;
+  background: linear-gradient(90deg, transparent, var(--line-strong));
+}
+.tb-eyebrow::after {
+  transform: scaleX(-1);
+}
+
+/* ---------- Tabuleiro ---------- */
+.tb-tile {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-tile);
+  font-weight: 700;
+  font-size: clamp(26px, 8vw, 38px);
+  text-transform: uppercase;
+  user-select: none;
+  border: 2px solid var(--tile-empty-border);
+  border-radius: var(--r-tile);
+  background: transparent;
+  color: var(--ink);
+  transition:
+    border-color 120ms ease,
+    transform 120ms ease;
+}
+.tb-tile.is-typed {
+  border-color: var(--tile-typed-border);
+}
+.tb-tile.s-correct {
+  background: var(--correct);
+  border-color: var(--correct);
+  color: var(--tile-letter);
+}
+.tb-tile.s-present {
+  background: var(--present);
+  border-color: var(--present);
+  color: var(--tile-letter);
+}
+.tb-tile.s-absent {
+  background: var(--absent);
+  border-color: var(--absent);
+  color: var(--tile-letter);
+}
+
+/* ---------- Teclado ---------- */
+.tb-key {
+  flex: 1;
+  min-width: 0;
+  height: 54px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-key);
+  background: var(--key-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 130ms ease,
+    color 130ms ease,
+    transform 80ms ease;
+}
+.tb-key:hover {
+  background: var(--key-bg-hover);
+}
+.tb-key:active {
+  transform: translateY(1px);
+}
+.tb-key.special {
+  flex: 1.6;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.tb-key.special svg {
+  width: 22px;
+  height: 22px;
+}
+.tb-key.s-correct {
+  background: var(--correct);
+  border-color: var(--correct);
+  color: var(--tile-letter);
+}
+.tb-key.s-present {
+  background: var(--present);
+  border-color: var(--present);
+  color: var(--tile-letter);
+}
+.tb-key.s-absent {
+  background: var(--absent-key);
+  border-color: var(--absent-key);
+  color: var(--ink-faint);
+}
+
+/* ---------- Botão dica / pílula ---------- */
+.tb-hint-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+.tb-hint-btn:hover {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.tb-hint-btn svg {
+  width: 17px;
+  height: 17px;
+  color: var(--gold);
+}
+.tb-hint-text {
+  max-width: 380px;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  display: inline-flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.tb-hint-text svg {
+  width: 18px;
+  height: 18px;
+  color: var(--gold);
+  flex: none;
+  margin-top: 2px;
+}
+
+/* ---------- Anúncio (placeholder) ---------- */
+.tb-ad {
+  width: 100%;
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  color: var(--ink-faint);
+  font-size: 12px;
+  text-align: center;
+  padding: 22px 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Toast ---------- */
+.tb-toast {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-card);
+  animation: toast-in 0.16s ease-out;
+}
+
+/* ---------- Modal ---------- */
+.tb-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--scrim);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.tb-modal {
+  width: 100%;
+  max-width: 440px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  padding: 26px 26px 30px;
+  animation: modal-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.tb-modal-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.tb-close {
+  all: unset;
+  cursor: pointer;
+  color: var(--ink-faint);
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 8px;
+}
+.tb-close:hover {
+  color: var(--ink);
+  background: var(--accent-soft);
+}
+.tb-close svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ornamento divisor */
+.tb-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--gold);
+  margin: 6px 0 16px;
+}
+.tb-ornament::before,
+.tb-ornament::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+}
+.tb-ornament svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* corpo de texto / artigos */
+.tb-prose {
+  color: var(--ink-soft);
+  font-size: 15.5px;
+  line-height: 1.62;
+}
+.tb-prose h2 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-size: 24px;
+  margin: 0 0 6px;
+}
+.tb-prose h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  margin: 22px 0 6px;
+}
+.tb-prose p {
+  margin: 0 0 14px;
+}
+.tb-prose strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tb-prose a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.tb-prose a:hover {
+  text-decoration: underline;
+}
+.tb-prose ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  list-style: disc;
+}
+.tb-prose li {
+  margin-bottom: 6px;
+}
+
+/* ---------- Revelação: palavra + versículo ---------- */
+.tb-reveal {
+  text-align: center;
+  background: var(--paper-sunken);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 18px;
+  margin-bottom: 20px;
+}
+.tb-reveal .label {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0 0 4px;
+}
+.tb-reveal .word {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin: 0;
+}
+.tb-reveal .ref {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin: 8px 0 0;
+  text-transform: uppercase;
+}
+.tb-reveal .verse {
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin: 12px auto 0;
+  max-width: 320px;
+}
+
+/* ---------- Estatísticas ---------- */
+.tb-stat-val {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.tb-stat-lbl {
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+.tb-dist-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 10px;
+}
+.tb-dist-bar {
+  min-width: 26px;
+  border-radius: 5px;
+  padding: 2px 8px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tile-letter);
+  background: var(--correct);
+}
+.tb-dist-bar.empty {
+  background: var(--line);
+  color: var(--ink-faint);
+}
+
+.tb-countdown .lbl {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align: center;
+}
+.tb-countdown .time {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Botão primário (pílula) ---------- */
+.tb-btn-primary {
+  border: none;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 26px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  transition:
+    filter 150ms ease,
+    transform 80ms ease;
+}
+.tb-btn-primary:hover {
+  filter: brightness(1.08);
+}
+.tb-btn-primary:active {
+  transform: translateY(1px);
+}
+.tb-btn-primary svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Botão secundário (pílula contornada) ---------- */
+.tb-btn-secondary {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-decoration: none;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+.tb-btn-secondary:hover {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+}
+
+/* mini-tiles (modal ajuda) */
+.tb-minitile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--tile-empty-border);
+  border-radius: 8px;
+  font-family: var(--font-tile);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+.tb-minitile.s-correct {
+  background: var(--correct);
+  border-color: var(--correct);
+  color: var(--tile-letter);
+}
+.tb-minitile.s-present {
+  background: var(--present);
+  border-color: var(--present);
+  color: var(--tile-letter);
+}
+.tb-minitile.s-absent {
+  background: var(--absent);
+  border-color: var(--absent);
+  color: var(--tile-letter);
+}
+.tb-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  vertical-align: -3px;
+  margin-right: 8px;
+}
+
+/* ---------- Inputs ---------- */
+.tb-input {
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.tb-input:focus {
+  border-color: var(--gold);
+}
+.tb-input::placeholder {
+  color: var(--ink-faint);
+}
+
+/* ===== Animações ===== */
 
 /* Flip de revelação: a cor final entra na metade do giro via --reveal-bg */
 @keyframes tile-flip {
@@ -46,27 +717,27 @@ body {
     transform: rotateX(90deg);
     background-color: var(--reveal-bg);
     border-color: var(--reveal-bg);
-    color: #fff;
+    color: var(--tile-letter);
   }
   100% {
     transform: rotateX(0deg);
     background-color: var(--reveal-bg);
     border-color: var(--reveal-bg);
-    color: #fff;
+    color: var(--tile-letter);
   }
 }
 
 .tile-flip {
-  animation: tile-flip 0.5s ease both;
+  animation: tile-flip 0.55s ease both;
 }
 
 /* Pop ao digitar uma letra */
 @keyframes tile-pop {
   0% {
-    transform: scale(0.85);
+    transform: scale(0.86);
   }
   50% {
-    transform: scale(1.08);
+    transform: scale(1.07);
   }
   100% {
     transform: scale(1);
@@ -120,34 +791,34 @@ body {
   animation: tile-bounce 0.6s ease both;
 }
 
-/* Toast */
+/* Toast — apenas transform (não animar opacity 0→1) */
 @keyframes toast-in {
   from {
-    opacity: 0;
     transform: translateY(-8px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
-.toast-in {
-  animation: toast-in 0.15s ease-out;
-}
-
-/* Modal */
+/* Modal — apenas transform (não animar opacity 0→1) */
 @keyframes modal-in {
   from {
-    opacity: 0;
-    transform: translateY(16px) scale(0.97);
+    transform: translateY(14px) scale(0.985);
   }
   to {
-    opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-.modal-in {
-  animation: modal-in 0.2s ease-out;
+@media (prefers-reduced-motion: reduce) {
+  .tile-flip,
+  .tile-pop,
+  .row-shake,
+  .tile-bounce,
+  .tb-toast,
+  .tb-modal,
+  .tb-scrim {
+    animation: none !important;
+  }
 }

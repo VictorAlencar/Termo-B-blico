@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Descubra a palavra bíblica do dia em até 6 tentativas.",
     start_url: "/",
     display: "standalone",
-    background_color: "#181614",
-    theme_color: "#3aa394",
+    background_color: "#f3ead4",
+    theme_color: "#7d2533",
     icons: [
       {
         src: "/favicon.ico",

@@ -42,9 +42,7 @@ export function AdBanner({
   if (!CLIENT_ID) {
     if (process.env.NODE_ENV === "development") {
       return (
-        <div
-          className={`flex min-h-[90px] items-center justify-center rounded border border-dashed border-stone-300 text-xs text-stone-400 dark:border-stone-600 ${className}`}
-        >
+        <div className={`tb-ad ${className}`}>
           [Anúncio — configure NEXT_PUBLIC_ADSENSE_CLIENT_ID]
         </div>
       );

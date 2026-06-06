@@ -10,6 +10,7 @@ import { Modal } from "@/components/Modal";
 import { Board } from "@/components/game/Board";
 import { Keyboard } from "@/components/game/Keyboard";
 import { AdBanner } from "@/components/ads/AdBanner";
+import { LampIcon, OrnamentIcon, QuillIcon, ShareIcon } from "@/components/icons";
 import { useGame } from "@/hooks/useGame";
 import { decodeChallenge, type Challenge } from "@/lib/challenge-codec";
 import { buildChallengeShareText, shareOrCopy } from "@/lib/share";
@@ -34,24 +35,23 @@ function ChallengeLoader() {
     return (
       <>
         <Header />
-        <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-4 px-4 py-8 text-center">
-          <p className="text-5xl">😕</p>
-          <h2 className="text-xl font-extrabold">Link de desafio inválido</h2>
-          <p className="text-sm text-stone-600 dark:text-stone-300">
+        <main className="mx-auto flex w-full max-w-[520px] flex-1 flex-col items-center justify-center gap-4 px-4 py-8 text-center">
+          <div className="tb-ornament w-full max-w-60">
+            <OrnamentIcon />
+          </div>
+          <h2 className="font-[var(--font-display)] text-2xl font-semibold tracking-[0.04em] text-ink">
+            Link de desafio inválido
+          </h2>
+          <p className="text-sm text-ink-soft">
             Este link parece estar incompleto ou corrompido. Peça para seu
             amigo enviar novamente — ou crie o seu próprio desafio!
           </p>
-          <div className="flex gap-3">
-            <Link
-              href="/criar"
-              className="rounded-xl bg-correct px-5 py-2.5 font-bold text-white transition hover:brightness-110"
-            >
+          <div className="mt-2 flex gap-3">
+            <Link href="/criar" className="tb-btn-primary">
+              <QuillIcon />
               Criar desafio
             </Link>
-            <Link
-              href="/"
-              className="rounded-xl border border-stone-300 px-5 py-2.5 font-bold transition hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-700"
-            >
+            <Link href="/" className="tb-btn-secondary">
               Jogo do dia
             </Link>
           </div>
@@ -98,26 +98,28 @@ function ChallengeGame({ challenge }: { challenge: Challenge }) {
       <Toast message={game.toast} />
 
       <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center gap-4 px-3 py-4">
-        <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">
-          🎁 Desafio de um amigo · {game.wordLength} letras
+        <p className="tb-eyebrow">
+          Desafio de um amigo · {game.wordLength} letras
         </p>
 
         <Board game={game} />
 
         {game.status === "playing" && (
-          <div className="min-h-10 text-center">
+          <div className="flex min-h-10 items-center justify-center text-center">
             {challenge.hint ? (
               hintVisible ? (
-                <p className="max-w-md text-sm text-stone-600 italic dark:text-stone-300">
-                  💡 {challenge.hint}
+                <p className="tb-hint-text">
+                  <LampIcon />
+                  <span>{challenge.hint}</span>
                 </p>
               ) : (
                 <button
                   type="button"
                   onClick={() => setHintVisible(true)}
-                  className="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 transition hover:bg-stone-100 dark:border-stone-600 dark:text-stone-300 dark:hover:bg-stone-700"
+                  className="tb-hint-btn"
                 >
-                  💡 Dica
+                  <LampIcon />
+                  Pedir uma luz
                 </button>
               )
             ) : null}
@@ -126,7 +128,7 @@ function ChallengeGame({ challenge }: { challenge: Challenge }) {
 
         <Keyboard statuses={game.keyboardStatuses} onKey={game.onKey} />
 
-        <AdBanner slot="challenge-bottom" className="w-full max-w-lg" />
+        <AdBanner slot="challenge-bottom" className="max-w-[500px]" />
       </main>
 
       <Footer />
@@ -134,34 +136,25 @@ function ChallengeGame({ challenge }: { challenge: Challenge }) {
       <Modal
         open={resultOpen}
         onClose={() => setResultOpen(false)}
-        title={game.status === "won" ? "Você acertou! 🎉" : "Não foi dessa vez"}
+        title={game.status === "won" ? "Você descobriu!" : "Não foi dessa vez"}
       >
-        <div className="mb-5 rounded-xl bg-stone-100 p-4 text-center dark:bg-stone-700/50">
-          <p className="text-sm text-stone-500 dark:text-stone-300">
-            A palavra era
-          </p>
-          <p className="text-3xl font-extrabold tracking-widest text-correct">
-            {challenge.word}
-          </p>
+        <div className="tb-reveal">
+          <p className="label">A palavra era</p>
+          <p className="word">{challenge.word}</p>
         </div>
 
         <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={handleShare}
-            className="rounded-xl bg-correct px-6 py-3 font-bold text-white transition hover:brightness-110"
-          >
-            {shareFeedback ?? "Compartilhar resultado 📋"}
+          <button type="button" onClick={handleShare} className="tb-btn-primary">
+            <ShareIcon />
+            {shareFeedback ?? "Compartilhar resultado"}
           </button>
-          <Link
-            href="/criar"
-            className="rounded-xl border border-stone-300 px-6 py-3 text-center font-bold transition hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-700"
-          >
-            Criar meu desafio ✏️
+          <Link href="/criar" className="tb-btn-secondary">
+            <QuillIcon />
+            Criar meu desafio
           </Link>
           <Link
             href="/"
-            className="text-center text-sm font-semibold text-correct hover:underline"
+            className="text-center text-sm font-semibold text-accent hover:underline"
           >
             Jogar a palavra do dia →
           </Link>

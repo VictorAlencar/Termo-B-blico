@@ -33,7 +33,7 @@ export function Board({ game }: { game: GameApi }) {
 
   return (
     <div
-      className="mx-auto grid w-full gap-1.5"
+      className="mx-auto grid w-full gap-[7px]"
       style={{
         maxWidth: `min(100%, ${wordLength * 4}rem)`,
         gridTemplateRows: `repeat(${MAX_GUESSES}, minmax(0, 1fr))`,
@@ -49,7 +49,7 @@ export function Board({ game }: { game: GameApi }) {
         return (
           <div
             key={rowIdx}
-            className="grid gap-1.5"
+            className="grid gap-[7px]"
             style={{ gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))` }}
             role="row"
           >
@@ -72,7 +72,7 @@ export function Board({ game }: { game: GameApi }) {
 
       {showCurrentRow && (
         <div
-          className={`grid gap-1.5 ${shaking ? "row-shake" : ""}`}
+          className={`grid gap-[7px] ${shaking ? "row-shake" : ""}`}
           style={{ gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))` }}
           role="row"
         >
@@ -91,7 +91,7 @@ export function Board({ game }: { game: GameApi }) {
       {Array.from({ length: emptyRows }, (_, r) => (
         <div
           key={`empty-${r}`}
-          className="grid gap-1.5"
+          className="grid gap-[7px]"
           style={{ gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))` }}
           role="row"
         >

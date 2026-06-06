@@ -18,7 +18,7 @@ import {
 
 /** Duração da revelação de uma linha (flip escalonado das células) */
 export const REVEAL_STEP_MS = 300;
-export const FLIP_DURATION_MS = 500;
+export const FLIP_DURATION_MS = 550;
 
 export interface UseGameOptions {
   /** Solução na forma exibida (pode ter acentos), ex: "MOISÉS" */

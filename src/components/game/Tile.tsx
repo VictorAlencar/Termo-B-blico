@@ -5,16 +5,9 @@ import type { LetterStatus } from "@/lib/game-logic";
 import { REVEAL_STEP_MS } from "@/hooks/useGame";
 
 const REVEAL_BG: Record<LetterStatus, string> = {
-  correct: "#3aa394",
-  present: "#d3ad69",
-  absent: "var(--tile-absent)",
-};
-
-const STATIC_CLASSES: Record<LetterStatus, string> = {
-  correct: "bg-correct border-correct text-white",
-  present: "bg-present border-present text-white",
-  absent:
-    "bg-stone-400 border-stone-400 text-white dark:bg-stone-700 dark:border-stone-700",
+  correct: "var(--correct)",
+  present: "var(--present)",
+  absent: "var(--absent)",
 };
 
 interface TileProps {
@@ -38,32 +31,28 @@ export function Tile({
   bounce = false,
   justTyped = false,
 }: TileProps) {
-  const base =
-    "flex aspect-square w-full items-center justify-center rounded border-2 text-2xl font-extrabold uppercase select-none sm:text-3xl";
-
-  let stateClasses =
-    "border-stone-300 dark:border-stone-600 bg-transparent";
+  let className = "tb-tile";
   let style: CSSProperties | undefined;
 
   if (status) {
     if (bounce) {
-      stateClasses = `${STATIC_CLASSES[status]} tile-bounce`;
+      className += ` s-${status} tile-bounce`;
       style = { animationDelay: `${index * 100}ms` };
     } else if (animateReveal) {
-      stateClasses = "tile-flip border-stone-300 dark:border-stone-600";
+      className += " tile-flip";
       style = {
         ["--reveal-bg" as string]: REVEAL_BG[status],
         animationDelay: `${index * REVEAL_STEP_MS}ms`,
       };
     } else {
-      stateClasses = STATIC_CLASSES[status];
+      className += ` s-${status}`;
     }
   } else if (letter) {
-    stateClasses = `border-stone-500 dark:border-stone-400 ${justTyped ? "tile-pop" : ""}`;
+    className += ` is-typed${justTyped ? " tile-pop" : ""}`;
   }
 
   return (
-    <div className={`${base} ${stateClasses}`} style={style}>
+    <div className={className} style={style}>
       {letter}
     </div>
   );

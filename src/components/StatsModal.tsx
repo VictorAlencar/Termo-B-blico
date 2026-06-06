@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import { Countdown } from "./Countdown";
 import { AdBanner } from "./ads/AdBanner";
+import { OrnamentIcon, ShareIcon } from "./icons";
 import { loadStats, type PlayerStats } from "@/lib/storage";
 import { buildDailyShareText, shareOrCopy } from "@/lib/share";
 import type { GameApi } from "@/hooks/useGame";
@@ -50,75 +51,67 @@ export function StatsModal({ open, onClose, game, word, day }: StatsModalProps) 
   return (
     <Modal open={open} onClose={onClose} title="Estatísticas">
       {game.finished && (
-        <div className="mb-5 rounded-xl bg-stone-100 p-4 text-center dark:bg-stone-700/50">
-          <p className="text-sm text-stone-500 dark:text-stone-300">
-            {game.status === "won" ? "🎉 Você acertou!" : "A palavra era"}
+        <div className="tb-reveal">
+          <p className="label">
+            {game.status === "won" ? "Você descobriu!" : "A palavra era"}
           </p>
-          <p className="text-3xl font-extrabold tracking-widest text-correct">
-            {game.solution}
-          </p>
-          <p className="mt-1 text-sm font-semibold">{word.referencia}</p>
-          <p className="mt-2 text-sm text-stone-600 italic dark:text-stone-300">
-            “{word.dica}”
-          </p>
+          <p className="word">{game.solution}</p>
+          <p className="ref">{word.referencia}</p>
+          {word.versiculo && <p className="verse">{word.versiculo}</p>}
         </div>
       )}
 
       {stats && (
         <>
-          <div className="mb-5 grid grid-cols-4 gap-2 text-center">
+          <div className="mb-[22px] grid grid-cols-4 gap-2 text-center">
             {[
               [stats.gamesPlayed, "jogos"],
               [`${winRate}%`, "vitórias"],
               [stats.currentStreak, "sequência"],
-              [stats.maxStreak, "melhor seq."],
+              [stats.maxStreak, "melhor"],
             ].map(([value, label]) => (
               <div key={label as string}>
-                <p className="text-2xl font-extrabold">{value}</p>
-                <p className="text-[11px] text-stone-500 dark:text-stone-400">
-                  {label}
-                </p>
+                <div className="tb-stat-val">{value}</div>
+                <div className="tb-stat-lbl">{label}</div>
               </div>
             ))}
           </div>
 
-          <div className="mb-5">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400">
-              Distribuição de tentativas
-            </p>
-            <div className="space-y-1">
-              {stats.distribution.map((count, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm">
-                  <span className="w-3 font-bold">{i + 1}</span>
-                  <div
-                    className={`min-w-6 rounded px-2 py-0.5 text-right text-xs font-bold text-white ${
-                      count > 0 ? "bg-correct" : "bg-stone-300 dark:bg-stone-600"
-                    }`}
-                    style={{ width: `${(count / maxDist) * 100}%` }}
-                  >
-                    {count}
-                  </div>
+          <p className="tb-dist-title">Distribuição de tentativas</p>
+          <div className="mb-4">
+            {stats.distribution.map((count, i) => (
+              <div key={i} className="mb-[5px] flex items-center gap-2 text-[13px]">
+                <span className="w-3 font-[var(--font-display)] font-bold text-ink-soft">
+                  {i + 1}
+                </span>
+                <div
+                  className={`tb-dist-bar${count === 0 ? " empty" : ""}`}
+                  style={{ width: `${(count / maxDist) * 100}%` }}
+                >
+                  {count}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </>
       )}
 
       {game.finished && (
-        <div className="mb-4 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <Countdown />
-          <button
-            type="button"
-            onClick={handleShare}
-            className="rounded-xl bg-correct px-6 py-3 font-bold text-white transition hover:brightness-110"
-          >
-            {shareFeedback ?? "Compartilhar 📋"}
-          </button>
-        </div>
+        <>
+          <div className="tb-ornament">
+            <OrnamentIcon />
+          </div>
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <Countdown />
+            <button type="button" onClick={handleShare} className="tb-btn-primary">
+              <ShareIcon />
+              {shareFeedback ?? "Compartilhar"}
+            </button>
+          </div>
+        </>
       )}
 
-      <AdBanner slot="game-over" className="mt-2" />
+      <AdBanner slot="game-over" className="mt-5" />
     </Modal>
   );
 }

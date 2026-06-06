@@ -21,11 +21,9 @@ export function Countdown() {
   }, []);
 
   return (
-    <div className="text-center">
-      <p className="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
-        Próxima palavra em
-      </p>
-      <p className="font-mono text-2xl font-bold tabular-nums">
+    <div className="tb-countdown">
+      <p className="lbl">Próxima palavra em</p>
+      <p className="time">
         {remaining === null ? "--:--:--" : format(remaining)}
       </p>
     </div>

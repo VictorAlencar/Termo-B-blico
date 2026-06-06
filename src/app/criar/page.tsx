@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AdBanner } from "@/components/ads/AdBanner";
+import { OrnamentIcon, QuillIcon } from "@/components/icons";
 import { buildChallengeUrl } from "@/lib/challenge-codec";
 import {
   isPlayableWord,
@@ -56,21 +57,23 @@ export default function CreateChallengePage() {
   return (
     <>
       <Header />
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-extrabold">Criar desafio</h2>
-          <p className="mt-2 text-sm text-stone-600 dark:text-stone-300">
-            Escolha uma palavra secreta e envie o link para seus amigos
-            tentarem adivinhar — funciona com qualquer palavra, não precisa ser
-            bíblica!
+      <main className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-5 px-4 pt-[22px] pb-7">
+        <article className="tb-prose">
+          <h2>Criar um desafio</h2>
+          <div className="tb-ornament" style={{ justifyContent: "flex-start", margin: "10px 0 18px" }}>
+            <OrnamentIcon />
+          </div>
+          <p>
+            Escolha uma palavra secreta de <strong>{MIN_WORD_LENGTH} a {MAX_WORD_LENGTH} letras</strong>{" "}
+            e envie o link para seus amigos tentarem adivinhar. A palavra viaja
+            codificada no próprio link: nada fica salvo em servidor — e não
+            precisa ser bíblica!
           </p>
-        </div>
+        </article>
 
-        <form onSubmit={handleCreate} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-semibold">
-              Palavra secreta ({MIN_WORD_LENGTH} a {MAX_WORD_LENGTH} letras)
-            </span>
+        <form onSubmit={handleCreate} className="flex max-w-[420px] flex-col gap-4">
+          <label className="flex flex-col gap-1.5">
+            <span className="text-sm font-semibold text-ink">Palavra secreta</span>
             <input
               type="text"
               value={word}
@@ -81,18 +84,18 @@ export default function CreateChallengePage() {
               maxLength={12}
               autoComplete="off"
               autoCapitalize="characters"
-              placeholder="Ex: MOISÉS"
-              className="rounded-xl border border-stone-300 bg-white px-4 py-3 text-lg font-bold uppercase tracking-widest outline-none focus:border-correct dark:border-stone-600 dark:bg-stone-800"
+              placeholder="Ex.: MOISÉS"
+              className="tb-input text-lg font-semibold uppercase tracking-[0.1em]"
             />
             {word.trim() && (
-              <span className="text-xs text-stone-500">
+              <span className="text-xs text-ink-faint">
                 {normalizedLength} letras
               </span>
             )}
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-semibold">Dica (opcional)</span>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-sm font-semibold text-ink">Dica (opcional)</span>
             <input
               type="text"
               value={hint}
@@ -101,44 +104,38 @@ export default function CreateChallengePage() {
                 setLink(null);
               }}
               maxLength={120}
-              placeholder="Ex: Libertou o povo do Egito"
-              className="rounded-xl border border-stone-300 bg-white px-4 py-3 outline-none focus:border-correct dark:border-stone-600 dark:bg-stone-800"
+              placeholder="Ex.: Libertou o povo do Egito"
+              className="tb-input"
             />
           </label>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950 dark:text-red-300">
+            <p className="rounded-[10px] border border-accent/30 bg-paper-sunken px-3 py-2 text-sm text-accent">
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            className="rounded-xl bg-correct px-6 py-3 font-bold text-white transition hover:brightness-110"
-          >
+          <button type="submit" className="tb-btn-primary self-start">
+            <QuillIcon />
             Gerar link do desafio
           </button>
         </form>
 
         {link && (
-          <div className="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-4 dark:border-stone-700 dark:bg-stone-800/50">
-            <p className="text-sm font-semibold">🎉 Desafio criado!</p>
-            <p className="break-all rounded-lg bg-white px-3 py-2 font-mono text-xs text-stone-600 dark:bg-stone-900 dark:text-stone-300">
+          <div className="flex max-w-[420px] flex-col gap-3 rounded-[14px] border border-line bg-paper-sunken p-4">
+            <p className="text-sm font-semibold text-ink">Seu desafio está pronto:</p>
+            <p className="rounded-[10px] border border-line bg-paper-raised px-3 py-2 font-mono text-xs break-all text-ink-soft">
               {link}
             </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={copyLink}
-                className="flex-1 rounded-xl border border-stone-300 px-4 py-2.5 text-sm font-bold transition hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-700"
-              >
-                {copied ? "Copiado! ✅" : "Copiar link 📋"}
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={copyLink} className="tb-btn-secondary flex-1 text-sm">
+                {copied ? "Copiado!" : "Copiar link"}
               </button>
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 rounded-xl bg-[#25D366] px-4 py-2.5 text-center text-sm font-bold text-white transition hover:brightness-110"
+                className="tb-btn-primary flex-1 text-sm"
               >
                 WhatsApp
               </a>
@@ -146,7 +143,7 @@ export default function CreateChallengePage() {
           </div>
         )}
 
-        <AdBanner slot="create-bottom" />
+        <AdBanner slot="create-bottom" className="max-w-[500px]" />
       </main>
       <Footer />
     </>

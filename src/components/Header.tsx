@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
+import { ChartIcon, HelpIcon, QuillIcon } from "./icons";
 
 interface HeaderProps {
   onHelp?: () => void;
@@ -10,52 +11,42 @@ interface HeaderProps {
 
 export function Header({ onHelp, onStats }: HeaderProps) {
   return (
-    <header className="border-b border-stone-200 dark:border-stone-700">
-      <div className="mx-auto flex max-w-2xl items-center justify-between px-3 py-2">
-        <div className="flex items-center gap-1">
+    <header className="tb-header">
+      <div className="mx-auto flex max-w-[640px] items-center justify-between px-4 py-3">
+        <div className="flex gap-0.5">
           {onHelp ? (
             <button
               type="button"
               onClick={onHelp}
               aria-label="Como jogar"
-              className="rounded-lg p-2 text-xl hover:bg-stone-200 dark:hover:bg-stone-700"
+              className="tb-iconbtn"
             >
-              ❓
+              <HelpIcon />
             </button>
           ) : (
-            <Link
-              href="/como-jogar"
-              aria-label="Como jogar"
-              className="rounded-lg p-2 text-xl hover:bg-stone-200 dark:hover:bg-stone-700"
-            >
-              ❓
+            <Link href="/como-jogar" aria-label="Como jogar" className="tb-iconbtn">
+              <HelpIcon />
             </Link>
           )}
-          <Link
-            href="/criar"
-            aria-label="Criar desafio"
-            className="rounded-lg p-2 text-xl hover:bg-stone-200 dark:hover:bg-stone-700"
-          >
-            ✏️
+          <Link href="/criar" aria-label="Criar desafio" className="tb-iconbtn">
+            <QuillIcon />
           </Link>
         </div>
 
-        <Link href="/" className="text-center">
-          <h1 className="text-xl font-extrabold tracking-widest uppercase sm:text-2xl">
-            Termo{" "}
-            <span className="text-correct">Bíblico</span>
-          </h1>
+        <Link href="/" className="tb-wordmark">
+          Termo <span className="accent">Bíblico</span>
+          <span className="dot">.</span>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex gap-0.5">
           {onStats && (
             <button
               type="button"
               onClick={onStats}
               aria-label="Estatísticas"
-              className="rounded-lg p-2 text-xl hover:bg-stone-200 dark:hover:bg-stone-700"
+              className="tb-iconbtn"
             >
-              📊
+              <ChartIcon />
             </button>
           )}
           <ThemeToggle />

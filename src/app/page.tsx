@@ -9,6 +9,7 @@ import { Keyboard } from "@/components/game/Keyboard";
 import { HelpModal } from "@/components/HelpModal";
 import { StatsModal } from "@/components/StatsModal";
 import { AdBanner } from "@/components/ads/AdBanner";
+import { LampIcon } from "@/components/icons";
 import { useGame } from "@/hooks/useGame";
 import { getDailyWord, getDayNumber } from "@/lib/daily";
 
@@ -25,7 +26,7 @@ export default function DailyGamePage() {
       <>
         <Header />
         <main className="flex flex-1 items-center justify-center">
-          <p className="animate-pulse text-stone-400">Carregando…</p>
+          <p className="animate-pulse text-ink-faint">Carregando…</p>
         </main>
         <Footer />
       </>
@@ -73,26 +74,24 @@ function DailyGame({ day }: { day: number }) {
       <Header onHelp={() => setHelpOpen(true)} onStats={() => setStatsOpen(true)} />
       <Toast message={game.toast} />
 
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center gap-4 px-3 py-4">
-        <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">
+      <main className="mx-auto flex w-full max-w-[520px] flex-1 flex-col items-center gap-[18px] px-3.5 pt-[22px] pb-7">
+        <p className="tb-eyebrow">
           Desafio #{day} · {game.wordLength} letras
         </p>
 
         <Board game={game} />
 
         {game.status === "playing" && (
-          <div className="min-h-10 text-center">
+          <div className="flex min-h-10 items-center justify-center text-center">
             {hintVisible || game.hintUsed ? (
-              <p className="max-w-md text-sm text-stone-600 italic dark:text-stone-300">
-                💡 {word.dica}
+              <p className="tb-hint-text">
+                <LampIcon />
+                <span>{word.dica}</span>
               </p>
             ) : (
-              <button
-                type="button"
-                onClick={showHint}
-                className="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 transition hover:bg-stone-100 dark:border-stone-600 dark:text-stone-300 dark:hover:bg-stone-700"
-              >
-                💡 Dica
+              <button type="button" onClick={showHint} className="tb-hint-btn">
+                <LampIcon />
+                Pedir uma luz
               </button>
             )}
           </div>
@@ -100,7 +99,7 @@ function DailyGame({ day }: { day: number }) {
 
         <Keyboard statuses={game.keyboardStatuses} onKey={game.onKey} />
 
-        <AdBanner slot="home-bottom" className="w-full max-w-lg" />
+        <AdBanner slot="home-bottom" className="max-w-[500px]" />
       </main>
 
       <Footer />

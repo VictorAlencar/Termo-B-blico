@@ -1,23 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MoonIcon, SunIcon } from "./icons";
 
 export function ThemeToggle() {
-  const [dark, setDark] = useState<boolean | null>(null);
+  const [theme, setTheme] = useState<"light" | "dark" | null>(null);
 
   useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
+    setTheme(
+      document.documentElement.getAttribute("data-theme") === "dark"
+        ? "dark"
+        : "light"
+    );
   }, []);
 
   const toggle = () => {
-    const next = !document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", next);
+    const next =
+      document.documentElement.getAttribute("data-theme") === "dark"
+        ? "light"
+        : "dark";
+    document.documentElement.setAttribute("data-theme", next);
     try {
-      localStorage.setItem("tb-theme", next ? "dark" : "light");
+      localStorage.setItem("tb-theme", next);
     } catch {
       // sem persistência
     }
-    setDark(next);
+    setTheme(next);
   };
 
   return (
@@ -25,9 +33,9 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Alternar tema claro/escuro"
-      className="rounded-lg p-2 text-xl hover:bg-stone-200 dark:hover:bg-stone-700"
+      className="tb-iconbtn"
     >
-      {dark === null ? "🌗" : dark ? "☀️" : "🌙"}
+      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>
   );
 }
