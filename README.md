@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Termo Bíblico 🙏
 
-## Getting Started
+Jogo diário de palavras com temática bíblica, inspirado no [Termo](https://term.ooo)/Wordle.
+Construído com Next.js (App Router) + TypeScript + Tailwind CSS. Sem login, sem banco de dados.
 
-First, run the development server:
+## Funcionalidades
+
+- **Palavra do dia** — uma palavra bíblica nova todo dia (4 a 8 letras, tabuleiro adaptável), igual para todos os jogadores (fuso de Brasília)
+- **Acentos automáticos** — digite sem acento, o jogo preenche (MOISES → MOISÉS)
+- **Dica bíblica** — botão 💡 revela uma pista; ao final, a referência bíblica da palavra
+- **Estatísticas** — vitórias, sequências e distribuição de tentativas no `localStorage`
+- **Compartilhar resultado** — grade de emojis 🟩🟨⬛ via Web Share API / clipboard
+- **Desafios personalizados** — crie uma palavra em `/criar` e compartilhe o link (a palavra vai codificada na própria URL, sem servidor)
+- **Tema claro/escuro** com persistência
+- **Google AdSense** pronto para ativar (ver abaixo)
+
+## Rodando localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Ativando o Google AdSense
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Crie/aprove sua conta em [adsense.google.com](https://adsense.google.com) com o domínio do site.
+2. Configure a variável de ambiente (local em `.env.local`, produção via `vercel env`):
+   ```
+   NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-SEU_ID_AQUI
+   ```
+3. Edite `public/ads.txt` com a linha fornecida pelo painel do AdSense.
+4. (Opcional) Crie blocos de anúncio no painel e troque os valores de `slot` nos componentes `<AdBanner slot="..." />`.
 
-## Learn More
+Sem o ID configurado, nenhum script de anúncio é carregado (placeholders aparecem apenas em desenvolvimento).
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                # Páginas: / (diário), /criar, /desafio, /como-jogar, /sobre, /privacidade
+├── components/         # UI: tabuleiro, teclado, modais, anúncios
+├── hooks/useGame.ts    # Máquina de estados do jogo (reutilizada pelo diário e desafios)
+└── lib/                # Lógica pura: avaliação, palavra do dia, codec de desafios, storage
+public/dict/{4..8}.txt  # Dicionários PT-BR por tamanho (validação de tentativas)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Adicionando palavras
 
-## Deploy on Vercel
+Edite `src/lib/words.ts` e adicione entradas **ao final da lista** (a ordem embaralhada é determinística — inserir no meio mudaria palavras de dias futuros já "agendados").
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+vercel
+```

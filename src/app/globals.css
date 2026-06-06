@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-correct: #3aa394;
+  --color-present: #d3ad69;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf9f7;
+  --foreground: #1c1917;
+  --tile-absent: #a8a29e;
+}
+
+.dark {
+  --background: #181614;
+  --foreground: #f5f5f4;
+  --tile-absent: #44403c;
 }
 
 @theme inline {
@@ -12,15 +26,128 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== Animações do jogo ===== */
+
+/* Flip de revelação: a cor final entra na metade do giro via --reveal-bg */
+@keyframes tile-flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  45% {
+    transform: rotateX(90deg);
+  }
+  55% {
+    transform: rotateX(90deg);
+    background-color: var(--reveal-bg);
+    border-color: var(--reveal-bg);
+    color: #fff;
+  }
+  100% {
+    transform: rotateX(0deg);
+    background-color: var(--reveal-bg);
+    border-color: var(--reveal-bg);
+    color: #fff;
+  }
+}
+
+.tile-flip {
+  animation: tile-flip 0.5s ease both;
+}
+
+/* Pop ao digitar uma letra */
+@keyframes tile-pop {
+  0% {
+    transform: scale(0.85);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.tile-pop {
+  animation: tile-pop 0.12s ease-out;
+}
+
+/* Shake em tentativa inválida */
+@keyframes row-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-6px);
+  }
+  40%,
+  60% {
+    transform: translateX(6px);
+  }
+}
+
+.row-shake {
+  animation: row-shake 0.5s ease;
+}
+
+/* Salto das células na vitória */
+@keyframes tile-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-14px);
+  }
+  70% {
+    transform: translateY(3px);
+  }
+}
+
+.tile-bounce {
+  animation: tile-bounce 0.6s ease both;
+}
+
+/* Toast */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-in {
+  animation: toast-in 0.15s ease-out;
+}
+
+/* Modal */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-in {
+  animation: modal-in 0.2s ease-out;
 }
